@@ -35,6 +35,7 @@ export default class RadarChart extends Component
 {
 
   static defaultProps = {
+    onCirclePress: () => {},
     options: {
       width: 600,
       height: 600,
@@ -42,6 +43,8 @@ export default class RadarChart extends Component
       r: 300,
       max: 150,
       rings: 3,
+      valueColorPoints: 1,
+      colorCircleSize: 5,
       fill: '#2980B9',
       stroke: '#2980B9',
       animate: {
@@ -49,6 +52,7 @@ export default class RadarChart extends Component
         duration: 200,
         fillTransition:3
       },
+      circleColors: null,
       label: {
         fontFamily: 'Arial',
         fontSize: 14,
@@ -83,6 +87,9 @@ export default class RadarChart extends Component
     const self = this
     const colors = styleSvg({}, self.props.options)
     const colorsFill = self.props.options.fill
+    const circleColors = self.props.options.circleColors;
+    const valueColorPoints = self.props.options.valueColorPoints || 1;
+    const colorCircleSize = self.props.options.colorCircleSize || 5;
     const curves = chart.curves.map(function (c, i) {
       const color = colorsFill instanceof Array ? colorsFill[i] : colorsFill;
       return (<Path key={i} d={c.polygon.path.print()} fill={color} fillOpacity={0.6} />)
@@ -96,6 +103,22 @@ export default class RadarChart extends Component
     })
 
     const textStyle = fontAdapt(options.label)
+
+    const circleColorPoints = chart.rings[length - valueColorPoints].path.points();
+
+    const circles = circleColors ? circleColorPoints.map(function (p, i) {
+      function onCirclePress() {
+        options.props.onCirclePress(keys[i], keys_value[`${keys[i]}`]);
+      }
+      const color = circleColors[keys[i]];
+      const circleX = p[0];
+      const circleY = p[1];
+      return (
+              <G key={'label' + i}>
+                  <Circle cx={circleX} cy={circleY} r={colorCircleSize} fill={color} onPress={onCirclePress} />
+              </G>
+            )
+    }) : null;
 
     const labels = chart.rings[length - 1].path.points().map(function (p, i) {
       function onLabelPress() {
@@ -126,6 +149,7 @@ export default class RadarChart extends Component
                   {rings}
                   {curves}
               </G>
+              {circles}
           </G>
       </Svg>
     );
