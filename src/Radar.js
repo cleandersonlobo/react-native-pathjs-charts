@@ -148,6 +148,7 @@ export default class RadarChart extends Component
           <G key={'label' + i}>
             {array.texts.map((text, index) => (
               <Text
+                  key={text}
                   fontFamily={textStyle.fontFamily}
                   fontSize={textStyle.fontSize}
                   fontWeight={textStyle.fontWeight}
