@@ -25,6 +25,15 @@ react-native link react-native-svg
 
 For further information on usage, see the [docs](https://capitalone.github.io/react-native-pathjs-charts/)
 
+Chart Types
+
+- [Bar Charts](/docs/bar/index.md)
+- [Pie Charts](/docs/pie/index.md)
+- [Radar Charts](/docs/radar/index.md)
+- [Scatterplot Charts](/docs/scatterplot/index.md)
+- [SmoothLine Charts](/docs/smoothline/index.md)
+- [StockLine Charts](/docs/stockline/index.md)
+- [Tree Charts](/docs/tree/index.md)
 
 ## Current Features
 
