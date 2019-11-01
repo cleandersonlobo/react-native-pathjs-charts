@@ -18,7 +18,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import React, {Component} from 'react'
 import {Text as ReactText}  from 'react-native'
-import Svg,{ G, Path, Line, Text} from 'react-native-svg'
+import Svg,{ G, Path, Line, Text, Circle } from 'react-native-svg'
 import { Options, identity, styleSvg, fontAdapt } from './util'
 const Radar = require('paths-js/radar')
 
@@ -35,6 +35,7 @@ export default class RadarChart extends Component
 {
 
   static defaultProps = {
+    onLabelPress: () => {},
     onCirclePress: () => {},
     options: {
       width: 600,
@@ -43,7 +44,8 @@ export default class RadarChart extends Component
       r: 300,
       max: 150,
       rings: 3,
-      valueColorPoints: 1,
+      valueLinePoints: 1,
+      valueColorPoints: 2,
       colorCircleSize: 5,
       fill: '#2980B9',
       stroke: '#2980B9',
@@ -52,13 +54,15 @@ export default class RadarChart extends Component
         duration: 200,
         fillTransition:3
       },
-      circleColors: null,
       label: {
         fontFamily: 'Arial',
         fontSize: 14,
         bold: true,
         color: '#34495E'
-      }
+      },
+      // default
+      textArray: null,
+      circleColors: null,
     }
   }
 
@@ -86,16 +90,22 @@ export default class RadarChart extends Component
     })
     const self = this
     const colors = styleSvg({}, self.props.options)
-    const colorsFill = self.props.options.fill
     const circleColors = self.props.options.circleColors;
-    const valueColorPoints = self.props.options.valueColorPoints || 1;
+    const textArray = self.props.options.textArray
+    const valueLinePoints = self.props.options.valueLinePoints || 1;
+    const valueColorPoints = self.props.options.valueColorPoints || 2;
     const colorCircleSize = self.props.options.colorCircleSize || 5;
+    const colorsFill = self.props.options.fill
     const curves = chart.curves.map(function (c, i) {
       const color = colorsFill instanceof Array ? colorsFill[i] : colorsFill;
       return (<Path key={i} d={c.polygon.path.print()} fill={color} fillOpacity={0.6} />)
     })
-
+    
     const length = chart.rings.length
+
+    const linesPoints = chart.rings[length - valueLinePoints].path.points();
+    const circleColorPoints = chart.rings[length - valueColorPoints].path.points();
+
     const rings = chart.rings.map(function (r, i) {
       if (i !== length - 1 ){
         return (<Path key={'rings'+i} d={r.path.print()} stroke={colors.stroke} strokeOpacity={colors.strokeOpacity} fill='none' />)
@@ -103,8 +113,6 @@ export default class RadarChart extends Component
     })
 
     const textStyle = fontAdapt(options.label)
-
-    const circleColorPoints = chart.rings[length - valueColorPoints].path.points();
 
     const circles = circleColors ? circleColorPoints.map(function (p, i) {
       function onCirclePress() {
@@ -120,14 +128,40 @@ export default class RadarChart extends Component
             )
     }) : null;
 
-    const labels = chart.rings[length - 1].path.points().map(function (p, i) {
-      function onLabelPress() {
-        textStyle.onLabelPress(keys[i], keys_value[`${keys[i]}`]);
-      }
-
+    const labels = linesPoints.map(function (p, i) {
       return (
               <G key={'label' + i}>
                   <Line x1={p[0]} y1={p[1]} x2={center[0]} y2={center[1]} stroke={colors.stroke} strokeOpacity={colors.strokeOpacity}/>
+              </G>
+            )
+    })
+
+    const texts = chart.rings[length - 1].path.points().map(function (p, i) {
+      function onLabelPress() {
+        options.props.onLabelPress(keys[i], keys_value[`${keys[i]}`]);
+      }
+      const textX = Math.floor(p[0])
+      const textY = Math.floor(p[1])
+      if (textArray) {
+        const array = textArray[keys[i]];
+        return (
+          <G key={'label' + i}>
+            {array.texts.map((text, index) => (
+              <Text
+                  fontFamily={textStyle.fontFamily}
+                  fontSize={textStyle.fontSize}
+                  fontWeight={textStyle.fontWeight}
+                  fontStyle={textStyle.fontStyle}
+                  fill={textStyle.fill}
+                  onPress={onLabelPress}
+                  textAnchor={array.textAnchor} x={textX + array.x} y={textY + (index * 14)}>{text}
+              </Text>
+            ))}
+          </G>
+        )  
+      }
+      return (
+              <G key={'label' + i}>
                   <Text
                       fontFamily={textStyle.fontFamily}
                       fontSize={textStyle.fontSize}
@@ -135,7 +169,7 @@ export default class RadarChart extends Component
                       fontStyle={textStyle.fontStyle}
                       fill={textStyle.fill}
                       onPress={onLabelPress}
-                      textAnchor="middle" x={Math.floor(p[0])} y={Math.floor(p[1])}>{keys[i]}
+                      textAnchor="middle" x={textX} y={textY}>{keys[i]}
                   </Text>
               </G>
             )
@@ -150,6 +184,7 @@ export default class RadarChart extends Component
                   {curves}
               </G>
               {circles}
+              {texts}
           </G>
       </Svg>
     );
