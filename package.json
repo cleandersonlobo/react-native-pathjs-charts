@@ -37,8 +37,8 @@
     }
   ],
   "dependencies": {
-    "lodash": "^4.17.14",
-    "paths-js": "^0.4.9",
+    "lodash": "^4.17.15",
+    "paths-js": "^0.4.10",
     "react-native-svg": "~9.5.1"
   },
   "devDependencies": {
