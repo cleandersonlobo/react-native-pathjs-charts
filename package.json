@@ -1,10 +1,10 @@
 {
   "name": "react-native-pathjs-charts",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "description": "Cross platform React Native charting library based on path-js and react-native-svg",
   "repository": {
     "type": "git",
-    "url": "https://github.com/capitalone/react-native-pathjs-charts"
+    "url": "https://github.com/cleandersonlobo/react-native-pathjs-charts/"
   },
   "main": "src/index.js",
   "scripts": {
@@ -21,9 +21,8 @@
     "android"
   ],
   "author": {
-    "name": "Cale Hoopes",
-    "email": "caledh@gmail.com",
-    "url": "https://github.com/capitalone"
+    "name": "Cleanderson Lobo",
+    "url": "https://github.com/cleandersonlobo"
   },
   "license": "Apache-2.0",
   "maintainers": [
@@ -36,10 +35,12 @@
       "email": "reineskat@gmail.com"
     }
   ],
+  "peerDependencies": {
+    "react-native-svg": "*"
+  },
   "dependencies": {
     "lodash": "^4.17.15",
-    "paths-js": "^0.4.10",
-    "react-native-svg": "~9.5.1"
+    "paths-js": "^0.4.10"
   },
   "devDependencies": {
     "babel-jest": "*",
