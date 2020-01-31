@@ -144,6 +144,8 @@ export default class RadarChart extends Component
       const textY = Math.floor(p[1])
       if (textArray) {
         const array = textArray[keys[i]];
+        const arrayX = array.x || 0;
+        const arrayY = array.y || 0;
         return (
           <G key={'label' + i}>
             {array.texts.map((text, index) => (
@@ -155,7 +157,7 @@ export default class RadarChart extends Component
                   fontStyle={textStyle.fontStyle}
                   fill={textStyle.fill}
                   onPress={onLabelPress}
-                  textAnchor={array.textAnchor} x={textX + array.x} y={textY + (index * 14)}>{text}
+                  textAnchor={array.textAnchor} x={textX + arrayX} y={textY + (index * 14) + arrayY}>{text}
               </Text>
             ))}
           </G>
